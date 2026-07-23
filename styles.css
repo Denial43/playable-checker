@@ -126,8 +126,8 @@ body{min-height:100vh;display:flex;flex-direction:column}
   position:relative;width:300px;height:614px;border-radius:46px;
   background:linear-gradient(160deg,#2b2f3a,#0d0f14);
   box-shadow:0 26px 60px rgba(15,25,50,.25), inset 0 0 0 2px rgba(255,255,255,.05);
-  padding:12px;transition:width .25s,height .25s,border-radius .25s;
-  flex-shrink:0;
+  padding:12px;transition:width .25s,height .25s,border-radius .25s,transform .2s;
+  transform-origin:50% 50%;flex-shrink:0;
 }
 .phone-device.type-tablet{border-radius:28px;background:linear-gradient(160deg,#33373f,#14161b)}
 .phone-device.type-desktop{border-radius:12px;padding:0;background:#1c1f26;box-shadow:0 20px 50px rgba(15,25,50,.22)}

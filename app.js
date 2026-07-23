@@ -262,6 +262,21 @@ Object.keys(deviceButtons).forEach((key) => {
   });
 });
 
+// Chrome (bezel/titlebar) added around the actual content viewport, per device type.
+// Phone/tablet: 12px padding on every side (see .phone-device{padding:12px}).
+// Desktop: no padding, but a 34px titlebar sits above the screen.
+const DEVICE_CHROME = {
+  phone:   { extraW: 24, extraH: 24 },
+  tablet:  { extraW: 24, extraH: 24 },
+  desktop: { extraW: 0,  extraH: 34 }
+};
+
+// IMPORTANT: the iframe is always kept at its true, native logical size (e.g. 390x844
+// for "phone") so that fixed-pixel layouts inside the playable render exactly as they
+// would on a real device — nothing inside the ad ever gets squeezed or reflowed.
+// To fit small screens we instead shrink the *whole device frame visually* with a
+// single CSS transform: scale(), which scales every pixel uniformly (bezel included)
+// instead of changing the iframe's actual rendered viewport.
 function fitDeviceFrame() {
   const item = activeItem();
   const spec = DEVICE_SPECS[state.deviceType];
@@ -269,29 +284,36 @@ function fitDeviceFrame() {
   if (state.deviceType !== "desktop" && state.landscape) {
     logicalW = spec.h; logicalH = spec.w;
   }
-  const ratio = logicalW / logicalH;
+
+  const chrome = DEVICE_CHROME[state.deviceType];
+  let extraW = chrome.extraW, extraH = chrome.extraH;
+  if (state.deviceType !== "desktop" && state.landscape) {
+    // padding is symmetric so it doesn't actually swap, kept for clarity/future chrome tweaks
+    extraW = chrome.extraW; extraH = chrome.extraH;
+  }
+
+  const nativeW = logicalW + extraW;
+  const nativeH = logicalH + extraH;
+
+  // Native (unscaled) box size — this is the frame's real layout size.
+  phoneDevice.style.width = nativeW + "px";
+  phoneDevice.style.height = nativeH + "px";
 
   const stageBox = phoneStage.getBoundingClientRect();
   const maxBox = DEVICE_MAX_BOX[state.deviceType];
-  const availW = Math.min(stageBox.width - 24, maxBox.w);
-  const availH = Math.min(stageBox.height - 24, maxBox.h);
+  const availW = Math.max(60, Math.min(stageBox.width - 24, maxBox.w));
+  const availH = Math.max(60, Math.min(stageBox.height - 24, maxBox.h));
 
-  let w = availW;
-  let h = w / ratio;
-  if (h > availH) {
-    h = availH;
-    w = h * ratio;
-  }
-  phoneDevice.style.width = Math.round(w) + "px";
-  phoneDevice.style.height = Math.round(h) + "px";
+  const scale = Math.min(availW / nativeW, availH / nativeH);
+  phoneDevice.style.transform = "scale(" + scale.toFixed(4) + ")";
 
-  deviceDims.textContent = logicalW + " × " + logicalH + " pt";
+  deviceDims.textContent = logicalW + " × " + logicalH + " pt  ·  " + Math.round(scale * 100) + "%";
   if (tbAddress) tbAddress.textContent = item ? item.name : "playable.html";
 }
 
 window.addEventListener("resize", () => {
   clearTimeout(window.__fitTimer);
-  window.__fitTimer = setTimeout(fitDeviceFrame, 100);
+  window.__fitTimer = setTimeout(fitDeviceFrame, 80);
 });
 
 // ---------- checks panel ----------

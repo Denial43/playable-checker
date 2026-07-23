@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Playable Preview &amp; QA</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">▶</div>
+    <div class="brand-text">
+      <div class="brand-title" data-i18n="appTitle">Playable Preview &amp; QA</div>
+      <div class="brand-sub" data-i18n="appSubtitle">Drag, preview, and validate your playable ads</div>
+    </div>
+  </div>
+  <div class="lang-switch" role="group" aria-label="Language">
+    <button class="lang-btn active" data-lang="en" id="langEnBtn">EN</button>
+    <button class="lang-btn" data-lang="ru" id="langRuBtn">RU</button>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- LEFT: uploader + file list -->
+  <section class="panel uploader-panel">
+    <div class="dropzone" id="dropzone" tabindex="0">
+      <input type="file" id="fileInput" accept=".html,.htm" multiple hidden>
+      <div class="dropzone-icon">⬆</div>
+      <div class="dropzone-title" data-i18n="dropTitle">Drop up to 10 playable .html files here</div>
+      <div class="dropzone-sub" data-i18n="dropSub">or click to browse your computer</div>
+    </div>
+    <div class="file-list" id="fileList"></div>
+    <div class="uploader-note" data-i18n="privacyNote">Everything runs in your browser. Files are never uploaded anywhere.</div>
+  </section>
+
+  <!-- CENTER: phone preview -->
+  <section class="panel preview-panel">
+    <div class="preview-toolbar">
+      <div class="preview-nav" id="previewNav" hidden>
+        <button id="prevBtn" class="nav-arrow" aria-label="Previous">&#8592;</button>
+        <div class="preview-counter" id="previewCounter">1 / 1</div>
+        <button id="nextBtn" class="nav-arrow" aria-label="Next">&#8594;</button>
+      </div>
+      <div class="preview-filename" id="previewFilename">&nbsp;</div>
+      <div class="preview-controls">
+        <button class="ctrl-btn" id="reloadBtn" data-i18n="reload" title="Reload">&#8635; Reload</button>
+        <button class="ctrl-btn" id="rotateBtn" data-i18n="rotate" title="Rotate">&#8635; Rotate</button>
+      </div>
+    </div>
+
+    <div class="device-switch" role="group" aria-label="Device type">
+      <button class="device-btn active" data-device="phone" id="devicePhoneBtn">
+        <span class="device-ic">&#128241;</span><span data-i18n="devicePhone">Phone</span>
+      </button>
+      <button class="device-btn" data-device="tablet" id="deviceTabletBtn">
+        <span class="device-ic">&#128242;</span><span data-i18n="deviceTablet">Tablet</span>
+      </button>
+      <button class="device-btn" data-device="desktop" id="deviceDesktopBtn">
+        <span class="device-ic">&#128187;</span><span data-i18n="deviceDesktop">Desktop</span>
+      </button>
+    </div>
+
+    <div class="phone-stage" id="phoneStage">
+      <div class="phone-device" id="phoneDevice">
+        <div class="desktop-titlebar" id="desktopTitlebar">
+          <span class="tb-dot tb-red"></span><span class="tb-dot tb-yellow"></span><span class="tb-dot tb-green"></span>
+          <div class="tb-address" id="tbAddress">playable.html</div>
+        </div>
+        <div class="phone-notch"></div>
+        <div class="tablet-cam"></div>
+        <div class="phone-screen">
+          <iframe id="previewFrame" title="Playable preview" sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-forms"></iframe>
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">📱</div>
+            <div data-i18n="emptyTitle">No playable loaded</div>
+            <div class="empty-sub" data-i18n="emptySub">Drop an HTML file on the left to preview it here</div>
+          </div>
+        </div>
+        <div class="phone-btn phone-btn-side1"></div>
+        <div class="phone-btn phone-btn-side2"></div>
+        <div class="phone-btn phone-btn-power"></div>
+      </div>
+    </div>
+    <div class="device-dims" id="deviceDims"></div>
+  </section>
+
+  <!-- RIGHT: checks -->
+  <section class="panel checks-panel">
+    <div class="checks-header">
+      <h2 data-i18n="checksTitle">Quality checks</h2>
+      <div class="overall-badge" id="overallBadge">—</div>
+    </div>
+
+    <div class="checks-empty" id="checksEmpty" data-i18n="checksEmpty">
+      Load a playable to see its file size, network compliance and integrity checks.
+    </div>
+
+    <div id="checksContent" hidden>
+
+      <div class="size-block">
+        <div class="size-row">
+          <span data-i18n="fileSize">File size</span>
+          <b id="sizeValue">0 KB</b>
+        </div>
+        <div class="size-bar">
+          <div class="size-bar-fill" id="sizeBarFill"></div>
+          <div class="size-bar-marker" style="left:100%"></div>
+        </div>
+        <div class="size-bar-caption"><span data-i18n="sizeCap">5 MB common network cap</span></div>
+      </div>
+
+      <h3 class="section-title" data-i18n="networkCompliance">Ad network compliance</h3>
+      <div class="network-table" id="networkTable"></div>
+
+      <h3 class="section-title" data-i18n="integrityChecks">Integrity &amp; structure checks</h3>
+      <div class="check-list" id="checkList"></div>
+
+      <h3 class="section-title" data-i18n="detectedInfo">Detected info</h3>
+      <div class="info-list" id="infoList"></div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span data-i18n="footerNote">Playable Preview &amp; QA — a local, static, client-side tool. No files leave your browser.</span>
+</footer>
+
+<script src="i18n.js"></script>
+<script src="checks.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

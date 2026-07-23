@@ -1,4 +1,4 @@
-# playable-checker / Проверка и превью плейблов
+# Playable Preview & QA / Проверка и превью плейблов
 
 A tiny, static, client-side tool for previewing HTML5 playable ads on a phone mockup and running quality/compliance checks before submitting them to ad networks. No backend, no build step, no dependencies — everything runs in the browser. Files are never uploaded anywhere.
 
